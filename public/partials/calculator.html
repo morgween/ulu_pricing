@@ -1,0 +1,290 @@
+  <main class="app-shell">
+    <header class="app-header">
+      <h1>מחשבון אירועים</h1>
+      <div class="font-controls">
+        <span>גודל טקסט:</span>
+        <button class="button" id="fontDec" type="button" aria-label="הקטנת הטקסט">A−</button>
+        <button class="button" id="fontInc" type="button" aria-label="הגדלת הטקסט">A+</button>
+        <button class="button button--primary" id="goToAdmin" style="display: none;" title="מעבר לניהול">⚙️ ניהול</button>
+      </div>
+    </header>
+
+    <ol class="stepper" aria-label="שלבי החישוב">
+      <li class="stepper__item clickable active" id="s1">שלב 1: סוג אירוע</li>
+      <li class="stepper__item clickable" id="s2">שלב 2: פרטי אירוע</li>
+      <li class="stepper__item clickable" id="s3">שלב 3: כיבוד ויין</li>
+      <li class="stepper__item" id="s4">שלב 4: הנחות ותוספות</li>
+      <li class="stepper__item" id="s5">שלב 5: סיכום</li>
+    </ol>
+
+    <!-- שלב 1 -->
+    <section class="card step-card is-active" id="step1" aria-labelledby="s1">
+      <h2 class="section-title">בחרו: אירוע פרטי או עסקי</h2>
+      <div class="row">
+        <label class="pill"><input type="radio" name="etype" value="personal" checked> פרטי</label>
+        <label class="pill"><input type="radio" name="etype" value="corporate"> עסקי</label>
+      </div>
+      <div class="hr" role="presentation"></div>
+      <div class="row">
+        <button class="button button--primary button--wide row__left" id="next1">הבא</button>
+      </div>
+    </section>
+
+    <!-- שלב 2 -->
+    <section class="card step-card" id="step2" aria-labelledby="s2">
+      <h2 class="section-title">פרטי האירוע</h2>
+      <div class="grid">
+        <div class="col-4 field">
+          <label for="date">תאריך</label>
+          <input type="date" id="date">
+        </div>
+        <div class="col-8 field">
+          <label for="client">שם הלקוח/ה</label>
+          <input type="text" id="client" placeholder="שם מלא">
+        </div>
+        <div class="col-4 field">
+          <label for="adults">מספר מבוגרים</label>
+          <input type="number" id="adults" min="0" step="1" value="50">
+        </div>
+        <div class="col-4 field">
+          <label for="children">מספר ילדים</label>
+          <input type="number" id="children" min="0" step="1" value="0">
+        </div>
+        <div class="col-4 field">
+          <label for="duration">משך האירוע</label>
+          <select id="duration">
+            <option value="short">קצר (עד 4 שעות)</option>
+            <option value="medium">בינוני (4–8 שעות)</option>
+            <option value="long">ארוך (8–12 שעות)</option>
+          </select>
+        </div>
+        <div class="col-6 field corp-only">
+          <label for="company_name">שם החברה</label>
+          <input type="text" id="company_name">
+        </div>
+        <div class="col-3 field corp-only">
+          <label for="company_hp">ח.פ</label>
+          <input type="text" id="company_hp">
+        </div>
+        <div class="col-3 field corp-only">
+          <label for="company_contact">איש/אשת קשר</label>
+          <input type="text" id="company_contact">
+        </div>
+        <div class="col-6 field">
+          <label for="event_type">סוג האירוע</label>
+          <input type="text" id="event_type" placeholder="לדוגמה: חתונה, יום הולדת">
+        </div>
+        <div class="col-6 field">
+          <label>מיקום האירוע</label>
+          <div class="row" id="venueRow"></div>
+        </div>
+      </div>
+      <div class="hr" role="presentation"></div>
+      <div class="row">
+        <div class="kpi"><span>סה"כ (כולל מע"מ)</span><strong id="mini2_total">₪0</strong></div>
+        <div class="kpi"><span>מחיר לאדם</span><strong id="mini2_pp">₪0</strong></div>
+      </div>
+      <div class="hr" role="presentation"></div>
+      <div class="row">
+        <button class="button" id="back2">חזרה</button>
+        <div class="row__left"></div>
+        <button class="button button--primary button--wide" id="next2">המשך</button>
+      </div>
+    </section>
+
+    <!-- שלב 3 -->
+    <section class="card step-card" id="step3" aria-labelledby="s3">
+      <h2 class="section-title">כיבוד ויין</h2>
+      <div id="menuSection" class="menu-section">
+        <span class="subheading">תפריט (כיבוד)</span>
+        <div class="row">
+          <label class="pill"><input type="radio" name="menu" value="winery" checked> כיבוד היקב</label>
+          <label class="pill"><input type="radio" name="menu" value="own_catering"> קייטרינג שאנחנו מביאים</label>
+          <label class="pill"><input type="radio" name="menu" value="client_catering"> קייטרינג חיצוני (לקוח מביא)</label>
+        </div>
+        <div id="upgrade_wrap" class="toggle-section">
+          <label class="pill"><input type="checkbox" id="upgrade_meal"> שדרוג הארוחה</label>
+        </div>
+        <div id="own_catering_wrap" class="toggle-section is-hidden">
+          <div class="field">
+            <label for="own_catering_pp">עלות קייטרינג (לפני מע"מ) לאדם</label>
+            <input type="number" id="own_catering_pp" min="0" step="50" value="0">
+          </div>
+        </div>
+      </div>
+      <div class="grid surface-stack">
+        <section class="col-12 surface">
+          <h3 class="subheading">משקאות חמים וקרים</h3>
+          <div class="row">
+            <label class="pill"><input type="checkbox" id="use_hot" checked> משקאות חמים</label>
+            <label class="pill"><input type="checkbox" id="use_cold" checked> משקאות קרים</label>
+          </div>
+          <div class="grid drinks-grid">
+            <div class="col-6 field">
+              <label for="hot_count">משקאות חמים לאדם</label>
+              <div class="quantity-control" data-input="hot_count">
+                <button type="button" class="qty-btn" data-delta="-0.25" aria-label="הפחתת משקאות חמים">−</button>
+                <input type="number" id="hot_count" min="0" step="0.25" value="0" data-drink-type="hot">
+                <button type="button" class="qty-btn" data-delta="0.25" aria-label="הוספת משקאות חמים">+</button>
+              </div>
+            </div>
+            <div class="col-6 field">
+              <label for="cold_count">משקאות קרים לאדם</label>
+              <div class="quantity-control" data-input="cold_count">
+                <button type="button" class="qty-btn" data-delta="-0.25" aria-label="הפחתת משקאות קרים">−</button>
+                <input type="number" id="cold_count" min="0" step="0.25" value="0" data-drink-type="cold">
+                <button type="button" class="qty-btn" data-delta="0.25" aria-label="הוספת משקאות קרים">+</button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="col-12 surface">
+          <h3 class="subheading">יין</h3>
+          <div class="grid wine-grid">
+            <div class="col-4 field">
+              <label for="wine_tier">בחירת יין</label>
+              <select id="wine_tier"></select>
+            </div>
+            <div class="col-4 field">
+              <label for="bottles_total">סה"כ בקבוקים</label>
+              <input type="number" id="bottles_total" min="0" step="1" value="0">
+            </div>
+          </div>
+          <div class="field field--auto">
+            <label class="pill pill--checkbox" for="autoBottles"><input type="checkbox" id="autoBottles" checked> חישוב אוטומטי</label>
+          </div>
+          <div class="grid wine-grid">
+            <div class="col-4 field">
+              <label for="bottles_white">לבן</label>
+              <input type="number" id="bottles_white" min="0" step="1" value="0">
+            </div>
+            <div class="col-4 field">
+              <label for="bottles_rose">רוזה</label>
+              <input type="number" id="bottles_rose" min="0" step="1" value="0">
+            </div>
+            <div class="col-4 field">
+              <label for="bottles_red">אדום</label>
+              <input type="number" id="bottles_red" min="0" step="1" value="0">
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="hr" role="presentation"></div>
+      <div class="row">
+        <div class="kpi"><span>סה"כ (כולל מע"מ)</span><strong id="mini3_total">₪0</strong></div>
+        <div class="kpi"><span>מחיר לאדם</span><strong id="mini3_pp">₪0</strong></div>
+      </div>
+      <div class="hr" role="presentation"></div>
+      <div class="row">
+        <button class="button" id="back3">חזרה</button>
+        <div class="row__left"></div>
+        <button class="button button--primary button--wide" id="next3">המשך</button>
+      </div>
+    </section>
+
+    <!-- שלב 4 -->
+    <section class="card step-card" id="step4" aria-labelledby="s4">
+      <h2 class="section-title">הנחות ותוספות</h2>
+      <div class="grid surface-stack">
+        <section class="col-12 surface">
+          <h3 class="subheading">הנחה</h3>
+          <div class="grid">
+            <div class="col-4 field">
+              <label for="discount_amount">הנחה בסכום (₪, לפני מע"מ)</label>
+              <input type="number" id="discount_amount" min="0" step="100" value="0">
+            </div>
+            <div class="col-4 field">
+              <label for="discount_percent">הנחה באחוזים (%)</label>
+              <input type="number" id="discount_percent" min="0" max="100" step="0.1" value="0">
+            </div>
+            <div class="col-4 field">
+              <label for="discount_reason">סיבת הנחה</label>
+              <input type="text" id="discount_reason" placeholder="למשל: לקוח חוזר">
+            </div>
+          </div>
+        </section>
+        <section class="col-12 surface">
+          <h3 class="subheading">תוספות</h3>
+          <p class="note" style="margin-bottom: 16px; font-size: 0.88em; line-height: 1.6; color: #666; padding: 12px; background: #fffbf5; border-radius: 8px; border-right: 3px solid var(--accent);">
+            <strong style="color: var(--accent-strong);">יקב מביא:</strong> עמלה 15% על מחיר הספק (לאירוע או לאדם)<br>
+            <strong style="color: var(--accent-strong);">לקוח מביא:</strong> עמלה בין ₪10-60 לאדם (ניתן להתאמה אישית)
+          </p>
+          <div class="row" id="quotaPresets"></div>
+          <table class="table" id="quotaTable">
+            <thead>
+              <tr>
+                <th>תיאור</th>
+                <th>מי מביא</th>
+                <th>סוג מחיר</th>
+                <th>מחיר/עמלה</th>
+                <th>סה"כ</th>
+                <th aria-label="פעולות"></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="row">
+            <button class="button" id="addQuotaWinery">+ יקב מביא</button>
+            <button class="button" id="addQuotaCustomer">+ לקוח מביא</button>
+          </div>
+        </section>
+      </div>
+      <div class="hr" role="presentation"></div>
+      <div class="row">
+        <div class="kpi"><span>סה"כ (כולל מע"מ)</span><strong id="mini4_total">₪0</strong></div>
+        <div class="kpi"><span>מחיר לאדם</span><strong id="mini4_pp">₪0</strong></div>
+      </div>
+      <div class="hr" role="presentation"></div>
+      <div class="row">
+        <button class="button" id="back4">חזרה</button>
+        <div class="row__left"></div>
+        <button class="button button--primary button--wide" id="next4">חישוב</button>
+      </div>
+    </section>
+
+    <!-- שלב 5 -->
+    <section class="card step-card" id="step5" aria-labelledby="s5">
+      <h2 class="section-title">סיכום תמחור</h2>
+      <div class="metrics-grid">
+        <div class="surface metric-card">
+          <div class="kpi"><span>סה"כ לפני מע"מ</span><strong id="total_exvat">₪0</strong></div>
+        </div>
+        <div class="surface metric-card">
+          <div class="kpi"><span>מע"מ (18%)</span><strong id="vat_amt">₪0</strong></div>
+        </div>
+        <div class="surface metric-card">
+          <div class="kpi"><span>סה"כ כולל מע"מ</span><strong id="total_incvat">₪0</strong></div>
+        </div>
+        <div class="surface metric-card">
+          <div class="kpi"><span>מחיר לאדם (כולל מע"מ)</span><strong id="pp_incvat">₪0</strong></div>
+        </div>
+      </div>
+      <div class="summary-panels">
+        <section class="surface summary-panel">
+          <h3 class="subheading">פרטי האירוע</h3>
+          <div class="meta-grid">
+            <dl><dt>לקוח/ה</dt><dd id="meta_client">-</dd></dl>
+            <dl><dt>תאריך האירוע</dt><dd id="meta_date">-</dd></dl>
+            <dl><dt>סוג האירוע</dt><dd id="meta_event">-</dd></dl>
+            <dl><dt>מיקום</dt><dd id="meta_venue">-</dd></dl>
+            <dl><dt>מספר אורחים</dt><dd id="meta_guests">-</dd></dl>
+            <dl><dt>אורחים אפקטיביים</dt><dd id="meta_guests_effective">-</dd></dl>
+          </div>
+        </section>
+        <section class="surface summary-panel">
+          <h3 class="subheading" id="summary_included_title">מה כלול</h3>
+          <ul class="summary-list" id="summary_included"></ul>
+          <h3 class="subheading" id="summary_addons_title">תוספות שנבחרו</h3>
+          <ul class="summary-list" id="summary_addons"></ul>
+          <p class="note hidden" id="discount_note"></p>
+        </section>
+      </div>
+      <div class="hr" role="presentation"></div>
+      <div class="export-actions">
+        <button class="button" id="back5">חזרה</button>
+        <div class="row__left"></div>
+        <button class="button button--primary button--wide" id="downloadPDFClient">PDF ללקוח</button>
+        <button class="button button--ghost button--wide" id="downloadXLSXInternal">Excel ליקב</button>
+      </div>
+    </section>
+  </main>

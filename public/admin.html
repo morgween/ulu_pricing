@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'" />
+  <title>ניהול תעריפים ותוספות</title>
+  <link rel="stylesheet" href="styles/admin.css" />
+</head>
+<body data-font-key="admin_font_px" data-font-default="16" data-font-min="12" data-font-max="22">
+  <div class="app-admin">
+    <header class="toolbar admin-header">
+      <div class="toolbar__title-group">
+        <h1 class="toolbar__title toolbar-title">ניהול תעריפים ותוספות</h1>
+      </div>
+      <div class="toolbar__actions toolbar-actions" aria-label="פעולות מהירות">
+        <span>גודל טקסט:</span>
+        <button class="button btn" id="fontDec" type="button" aria-label="הקטנת הטקסט">A−</button>
+        <button class="button btn" id="fontInc" type="button" aria-label="הגדלת הטקסט">A+</button>
+        <button class="button button--primary btn primary" id="saveToServer" title="שמור הגדרות לשרת">שמור</button>
+        <button class="button btn" id="goToCalculator" title="מעבר למחשבון">📊 מחשבון</button>
+        <button class="button btn" id="logoutBtn" title="יציאה מהמערכת">יציאה</button>
+      </div>
+    </header>
+
+    <div class="admin-layout">
+      <aside class="sidebar" aria-label="ניווט הגדרות">
+        <nav class="tabs" id="tabs" role="tablist">
+          <button class="tab active" type="button" role="tab" data-page="dashboard">סקירה כללית</button>
+          <button class="tab" type="button" role="tab" data-page="extras">תוספות</button>
+          <button class="tab" type="button" role="tab" data-page="general">הגדרות כלליות</button>
+          <button class="tab" type="button" role="tab" data-page="food">כיבוד היקב</button>
+          <button class="tab" type="button" role="tab" data-page="staffing">כוח אדם</button>
+          <button class="tab" type="button" role="tab" data-page="drinks">משקאות</button>
+          <button class="tab" type="button" role="tab" data-page="wine">יין</button>
+          <button class="tab" type="button" role="tab" data-page="revenue">יעדי רווח</button>
+          <button class="tab" type="button" role="tab" data-page="venues">מיקומים</button>
+          <button class="tab" type="button" role="tab" data-page="users">משתמשים</button>
+          <button class="tab" type="button" role="tab" data-page="branding">מיתוג PDF</button>
+        </nav>
+      </aside>
+
+      <main class="card card-panel" aria-live="polite">
+        <section class="page active" id="page-dashboard">
+          <header class="page__header">
+            <h2>סקירה כללית</h2>
+            <p class="helper-text">מסך זה מציג סיכום של ההגדרות העיקריות. לחצו על הלשוניות בצד לעריכה מפורטת.</p>
+          </header>
+          <div class="row">
+            <div class="flex-1">
+              <h3>הגדרות בסיס</h3>
+              <dl>
+                <dt>מע"מ:</dt><dd id="dash-vat">—</dd>
+                <dt>מקדם ילד כללי:</dt><dd id="dash-child-factor">—</dd>
+                <dt>מינימום אורחים:</dt><dd id="dash-min-guests">—</dd>
+              </dl>
+            </div>
+            <div class="flex-1">
+              <h3>כיבוד היקב</h3>
+              <dl>
+                <dt>מחיר לאדם (כולל מע"מ):</dt><dd id="dash-food-price">—</dd>
+                <dt>עלות לאדם (לפני מע"מ):</dt><dd id="dash-food-cost">—</dd>
+              </dl>
+            </div>
+            <div class="flex-1">
+              <h3>כוח אדם</h3>
+              <dl>
+                <dt>תעריף עובד:</dt><dd id="dash-worker-rate">—</dd>
+                <dt>בונוס מנהל:</dt><dd id="dash-manager-bonus">—</dd>
+                <dt>רכיב הכנסות:</dt><dd id="dash-revenue-comp">—</dd>
+              </dl>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-extras">
+          <header class="page__header">
+            <h2>תוספות ברירת־מחדל (config/quotas.js)</h2>
+          </header>
+          <table class="table" id="tblExtras">
+            <thead>
+              <tr>
+                <th>שם</th>
+                <th>תיאור</th>
+                <th>סוג</th>
+                <th>כמות</th>
+                <th>מחיר יח׳ (לפני מע"מ)</th>
+                <th aria-label="פעולות"></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="row">
+            <button class="button btn" id="addExtra">הוסף תוספת</button>
+          </div>
+        </section>
+
+        <section class="page" id="page-general">
+          <h2>הגדרות כלליות</h2>
+          <p class="helper-text">הגדרות בסיסיות המשפיעות על כל החישובים במערכת</p>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <label for="vat">מע"מ</label>
+              <span class="setting-value" id="vat-display">18%</span>
+            </div>
+            <input id="vat" type="range" min="0" max="0.30" step="0.01" value="0.18" class="slider">
+            <input id="vat-number" type="number" step="0.01" min="0" max="0.30" placeholder="0.18" class="slider-number">
+            <small class="field-help">שיעור המע״מ שיתווסף לכל החישובים (בדרך כלל 0.17-0.18)</small>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <label for="childFactor">מקדם ילד כללי</label>
+              <span class="setting-value" id="childFactor-display">75%</span>
+            </div>
+            <input id="childFactor" type="range" min="0" max="1" step="0.01" value="0.75" class="slider">
+            <input id="childFactor-number" type="number" step="0.01" min="0" max="1" placeholder="0.75" class="slider-number">
+            <small class="field-help">מקדם בסיסי לילדים - משפיע על כיבוד, משקאות ויין (0.75 = ילד נחשב כ-75% מאדם מבוגר)</small>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <label for="minGuests">מינימום אורחים לאירוע</label>
+              <span class="setting-value" id="minGuests-display">20</span>
+            </div>
+            <input id="minGuests" type="range" min="10" max="100" step="1" value="20" class="slider">
+            <input id="minGuests-number" type="number" step="1" min="0" placeholder="20" class="slider-number">
+            <small class="field-help">מספר האורחים המינימלי לקבלת אירוע ביקב</small>
+          </div>
+
+          <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--accent-strong);">הגדרות תוספות ועמלות</h3>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <label for="addonWineryCommission">עמלה - יקב מביא</label>
+              <span class="setting-value" id="addonWineryCommission-display">15%</span>
+            </div>
+            <input id="addonWineryCommission" type="range" min="0" max="0.50" step="0.01" value="0.15" class="slider">
+            <input id="addonWineryCommission-number" type="number" step="0.01" min="0" max="0.50" placeholder="0.15" class="slider-number">
+            <small class="field-help">אחוז עמלה כאשר היקב מביא ספק חיצוני (15% = מחיר לקוח יהיה מחיר ספק + 15%)</small>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <label for="addonCustomerCommissionMin">עמלה מינימלית - לקוח מביא (לאדם)</label>
+              <span class="setting-value" id="addonCustomerCommissionMin-display">₪10</span>
+            </div>
+            <input id="addonCustomerCommissionMin" type="range" min="5" max="100" step="1" value="10" class="slider">
+            <input id="addonCustomerCommissionMin-number" type="number" step="1" min="5" max="100" placeholder="10" class="slider-number">
+            <small class="field-help">עמלה מינימלית לאדם כאשר הלקוח מביא תוספת בעצמו</small>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <label for="addonCustomerCommissionMax">עמלה מקסימלית - לקוח מביא (לאדם)</label>
+              <span class="setting-value" id="addonCustomerCommissionMax-display">₪60</span>
+            </div>
+            <input id="addonCustomerCommissionMax" type="range" min="10" max="200" step="5" value="60" class="slider">
+            <input id="addonCustomerCommissionMax-number" type="number" step="5" min="10" max="200" placeholder="60" class="slider-number">
+            <small class="field-help">עמלה מקסימלית לאדם כאשר הלקוח מביא תוספת בעצמו</small>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <label for="addonCustomerCommissionDefault">עמלה ברירת מחדל - לקוח מביא (לאדם)</label>
+              <span class="setting-value" id="addonCustomerCommissionDefault-display">₪40</span>
+            </div>
+            <input id="addonCustomerCommissionDefault" type="range" min="10" max="100" step="5" value="40" class="slider">
+            <input id="addonCustomerCommissionDefault-number" type="number" step="5" min="10" max="100" placeholder="40" class="slider-number">
+            <small class="field-help">ערך ברירת מחדל לעמלה לאדם כאשר הלקוח מביא תוספת</small>
+          </div>
+        </section>
+
+        <section class="page" id="page-food">
+          <h2>כיבוד היקב ותוספות</h2>
+          <div class="row">
+            <div class="flex-1">
+              <label for="food_price_incVAT">מחיר לאדם (כולל מע"מ)</label>
+              <input id="food_price_incVAT" type="number" step="0.5" min="0">
+            </div>
+            <div class="flex-1">
+              <label for="food_cost_exVAT">עלות לאדם (לפני מע"מ)</label>
+              <input id="food_cost_exVAT" type="number" step="0.5" min="0">
+            </div>
+            <div class="flex-1">
+              <label for="food_child_factor">מקדם ילד לכיבוד</label>
+              <input id="food_child_factor" type="number" step="0.01" min="0" max="1" placeholder="משתמש במקדם הכללי אם ריק">
+              <small class="field-help" style="display: block; margin-top: 0.25rem;">ברירת מחדל: כמו המקדם הכללי בהגדרות בסיס</small>
+            </div>
+          </div>
+          <div class="row">
+            <div class="flex-1">
+              <label for="food_catering_markup">קייטרינג שלנו – תוספת %</label>
+              <input id="food_catering_markup" type="number" step="0.5" min="0">
+            </div>
+            <div class="flex-1">
+              <label for="food_customer_fee_pp">לקוח מביא – תוספת לאדם (לפני מע"מ)</label>
+              <input id="food_customer_fee_pp" type="number" step="0.5" min="0">
+            </div>
+          </div>
+          <h3>תוספות כיבוד</h3>
+          <table class="table" id="tblFoodExtras">
+            <thead>
+              <tr>
+                <th>מפתח</th>
+                <th>תווית</th>
+                <th>מזהה DOM</th>
+                <th>מחיר (כולל מע"מ)</th>
+                <th>עלות (לפני מע"מ)</th>
+                <th>חל על</th>
+                <th>חישוב לפי</th>
+                <th aria-label="פעולות"></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="row"><button class="button btn" id="addFoodExtra">הוסף תוספת</button></div>
+        </section>
+
+        <section class="page" id="page-staffing">
+          <h2>כוח אדם</h2>
+          <div class="row">
+            <div class="flex-1">
+              <label for="staff_worker_rate">תעריף עובד (לפני מע"מ)</label>
+              <input id="staff_worker_rate" type="number" step="1" min="0">
+            </div>
+            <div class="flex-1">
+              <label for="staff_manager_bonus">בונוס מנהל (לפני מע"מ)</label>
+              <input id="staff_manager_bonus" type="number" step="1" min="0">
+            </div>
+            <div class="flex-1">
+              <label for="staff_revenue_component">רכיב הכנסות קבוע</label>
+              <input id="staff_revenue_component" type="number" step="1" min="0">
+            </div>
+          </div>
+          <h3>טבלת עובדים לפי סוג תפריט</h3>
+          <table class="table" id="tblWorkerMatrix">
+            <thead><tr><th>מינימום אורחים</th><th>מקסימום אורחים</th><th>כיבוד היקב</th><th>קייטרינג</th><th aria-label="פעולות"></th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="row"><button class="button btn" id="addWorkerMatrix">הוסף שורה</button></div>
+        </section>
+
+        <section class="page" id="page-drinks">
+          <h2>משקאות</h2>
+          <div class="row">
+            <div class="flex-1">
+              <label for="drinks_hot_cost">עלות משקאות חמים (לפני מע"מ)</label>
+              <input id="drinks_hot_cost" type="number" step="0.5" min="0">
+            </div>
+            <div class="flex-1">
+              <label for="drinks_hot_multiplier">מקדם מחיר משקאות חמים</label>
+              <input id="drinks_hot_multiplier" type="number" step="0.1" min="0">
+            </div>
+            <div class="flex-1">
+              <label for="drinks_child_hot">מקדם ילדים – משקאות חמים</label>
+              <input id="drinks_child_hot" type="number" step="0.1" min="0">
+            </div>
+          </div>
+          <div class="row">
+            <div class="flex-1">
+              <label for="drinks_cold_cost">עלות משקאות קרים (לפני מע"מ)</label>
+              <input id="drinks_cold_cost" type="number" step="0.5" min="0">
+            </div>
+            <div class="flex-1">
+              <label for="drinks_cold_multiplier">מקדם מחיר משקאות קרים</label>
+              <input id="drinks_cold_multiplier" type="number" step="0.1" min="0">
+            </div>
+            <div class="flex-1">
+              <label for="drinks_child_cold">מקדם ילדים – משקאות קרים</label>
+              <input id="drinks_child_cold" type="number" step="0.1" min="0">
+            </div>
+          </div>
+          <h3 style="margin-top: 1.5rem;">כמויות משקאות לפי משך אירוע</h3>
+          <p class="helper-text" style="margin-bottom: 12px; font-size: 0.9em;">
+            הגדר כמה משקאות חמים וקרים כל אורח מקבל לפי משך האירוע.<br>
+            <strong>המלצה:</strong> קצר (1:1) • בינוני (1.5:1.5) • ארוך (2:2)
+          </p>
+          <table class="table" id="tblDrinkDurations">
+            <thead><tr><th>מפתח משך (short/medium/long)</th><th>משקאות חמים לאדם</th><th>משקאות קרים לאדם</th><th aria-label="פעולות"></th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="row"><button class="button btn" id="addDrinkDuration">+ הוסף משך אירוע</button></div>
+        </section>
+
+        <section class="page" id="page-wine">
+          <h2>יין – בסיס ותמחור</h2>
+          <p class="helper-text">הגדרות חישוב כמויות יין ותמחור לפי סוגים וצבעים</p>
+
+          <h3>חישוב בסיסי</h3>
+          <div class="setting-card">
+            <div class="setting-header">
+              <label for="wine_bottle_per_adults">בקבוק לכל X מבוגרים</label>
+              <span class="setting-value" id="wine_bottle_per_adults-display">5</span>
+            </div>
+            <input id="wine_bottle_per_adults" type="range" min="3" max="10" step="1" value="5" class="slider">
+            <input id="wine_bottle_per_adults-number" type="number" min="1" step="1" placeholder="5" class="slider-number">
+            <small class="field-help">כמה אורחים חולקים בקבוק יין אחד (ערך נמוך = יותר יין)</small>
+          </div>
+
+          <h3>יחס צבעים</h3>
+          <div class="ratio-validation-wrapper">
+            <p class="validation-message" id="color-ratio-validation">
+              <span class="validation-icon">⚠️</span>
+              <span class="validation-text">סה״כ חייב להיות 1.0 (100%)</span>
+              <span class="validation-sum" id="color-ratio-sum">סה״כ: 1.00</span>
+            </p>
+
+            <div class="ratio-visualizer" id="color-ratio-viz">
+              <div class="ratio-bar" style="background: linear-gradient(to left, #e8d4a8 0%, #e8d4a8 40%, #f4c5c5 40%, #f4c5c5 80%, #d4a5a5 80%, #d4a5a5 100%)"></div>
+              <div class="ratio-labels">
+                <span class="ratio-label">לבן: 40%</span>
+                <span class="ratio-label">רוזה: 40%</span>
+                <span class="ratio-label">אדום: 20%</span>
+              </div>
+            </div>
+
+            <div class="setting-card">
+              <div class="setting-header">
+                <label for="wine_ratio_white">יחס לבן</label>
+                <span class="setting-value" id="wine_ratio_white-display">40%</span>
+              </div>
+              <input id="wine_ratio_white" type="range" min="0" max="1" step="0.05" value="0.4" class="slider" data-ratio-group="color">
+              <input id="wine_ratio_white-number" type="number" min="0" max="1" step="0.01" placeholder="0.4" class="slider-number">
+            </div>
+
+            <div class="setting-card">
+              <div class="setting-header">
+                <label for="wine_ratio_rose">יחס רוזה</label>
+                <span class="setting-value" id="wine_ratio_rose-display">40%</span>
+              </div>
+              <input id="wine_ratio_rose" type="range" min="0" max="1" step="0.05" value="0.4" class="slider" data-ratio-group="color">
+              <input id="wine_ratio_rose-number" type="number" min="0" max="1" step="0.01" placeholder="0.4" class="slider-number">
+            </div>
+
+            <div class="setting-card">
+              <div class="setting-header">
+                <label for="wine_ratio_red">יחס אדום</label>
+                <span class="setting-value" id="wine_ratio_red-display">20%</span>
+              </div>
+              <input id="wine_ratio_red" type="range" min="0" max="1" step="0.05" value="0.2" class="slider" data-ratio-group="color">
+              <input id="wine_ratio_red-number" type="number" min="0" max="1" step="0.01" placeholder="0.2" class="slider-number">
+            </div>
+          </div>
+
+          <h3>חלוקת יין לפי ספק</h3>
+          <div class="ratio-validation-wrapper">
+            <p class="validation-message" id="supplier-ratio-validation">
+              <span class="validation-icon">⚠️</span>
+              <span class="validation-text">סה״כ חייב להיות 1.0 (100%)</span>
+              <span class="validation-sum" id="supplier-ratio-sum">סה״כ: 1.00</span>
+            </p>
+
+            <div class="ratio-visualizer" id="supplier-ratio-viz">
+              <div class="ratio-bar" style="background: linear-gradient(to left, #b88d3b 0%, #b88d3b 70%, #8b7355 70%, #8b7355 100%)"></div>
+              <div class="ratio-labels">
+                <span class="ratio-label">ULU: 70%</span>
+                <span class="ratio-label">כשר: 30%</span>
+              </div>
+            </div>
+
+            <div class="setting-card">
+              <div class="setting-header">
+                <label for="wine_mix_ulu">יחס ULU</label>
+                <span class="setting-value" id="wine_mix_ulu-display">70%</span>
+              </div>
+              <input id="wine_mix_ulu" type="range" min="0" max="1" step="0.05" value="0.7" class="slider" data-ratio-group="supplier">
+              <input id="wine_mix_ulu-number" type="number" min="0" max="1" step="0.01" placeholder="0.7" class="slider-number">
+            </div>
+
+            <div class="setting-card">
+              <div class="setting-header">
+                <label for="wine_mix_kosher">יחס כשר</label>
+                <span class="setting-value" id="wine_mix_kosher-display">30%</span>
+              </div>
+              <input id="wine_mix_kosher" type="range" min="0" max="1" step="0.05" value="0.3" class="slider" data-ratio-group="supplier">
+              <input id="wine_mix_kosher-number" type="number" min="0" max="1" step="0.01" placeholder="0.3" class="slider-number">
+            </div>
+          </div>
+
+          <h3>תמחור יינות ULU (לפי צבע)</h3>
+          <div class="row">
+            <div class="flex-1">
+              <label>לבן</label>
+              <input id="wine_ulu_white_cost" type="number" step="1" placeholder="40">
+              <small>עלות (לפני מע"מ)</small>
+              <input id="wine_ulu_white_price" type="number" step="1" placeholder="145">
+              <small>מחיר (כולל מע"מ)</small>
+            </div>
+            <div class="flex-1">
+              <label>רוזה</label>
+              <input id="wine_ulu_rose_cost" type="number" step="1" placeholder="40">
+              <small>עלות (לפני מע"מ)</small>
+              <input id="wine_ulu_rose_price" type="number" step="1" placeholder="145">
+              <small>מחיר (כולל מע"מ)</small>
+            </div>
+            <div class="flex-1">
+              <label>אדום</label>
+              <input id="wine_ulu_red_cost" type="number" step="1" placeholder="55">
+              <small>עלות (לפני מע"מ)</small>
+              <input id="wine_ulu_red_price" type="number" step="1" placeholder="189">
+              <small>מחיר (כולל מע"מ)</small>
+            </div>
+          </div>
+
+          <h3>תמחור יינות כשרים (לפי צבע)</h3>
+          <div class="row">
+            <div class="flex-1">
+              <label>לבן</label>
+              <input id="wine_kosher_white_cost" type="number" step="1" placeholder="35">
+              <small>עלות (לפני מע"מ)</small>
+              <input id="wine_kosher_white_price" type="number" step="1" placeholder="145">
+              <small>מחיר (כולל מע"מ)</small>
+            </div>
+            <div class="flex-1">
+              <label>רוזה</label>
+              <input id="wine_kosher_rose_cost" type="number" step="1" placeholder="35">
+              <small>עלות (לפני מע"מ)</small>
+              <input id="wine_kosher_rose_price" type="number" step="1" placeholder="145">
+              <small>מחיר (כולל מע"מ)</small>
+            </div>
+            <div class="flex-1">
+              <label>אדום</label>
+              <input id="wine_kosher_red_cost" type="number" step="1" placeholder="35">
+              <small>עלות (לפני מע"מ)</small>
+              <input id="wine_kosher_red_price" type="number" step="1" placeholder="145">
+              <small>מחיר (כולל מע"מ)</small>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-revenue">
+          <h2>יעדי רווח</h2>
+          <h3>כיבוד היקב</h3>
+          <table class="table" id="tblRevenueOurFood">
+            <thead><tr><th>מספר אורחים</th><th>יעד רווח%</th><th aria-label="פעולות"></th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="row"><button class="button btn" id="addRevenueOurFood">הוסף מדרגה</button></div>
+          <h3>קייטרינג שלנו</h3>
+          <table class="table" id="tblRevenueCatering">
+            <thead><tr><th>מספר אורחים</th><th>יעד רווח%</th><th aria-label="פעולות"></th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="row"><button class="button btn" id="addRevenueCatering">הוסף מדרגה</button></div>
+          <h3>לקוח מביא</h3>
+          <table class="table" id="tblRevenueCustomer">
+            <thead><tr><th>מספר אורחים</th><th>יעד רווח%</th><th aria-label="פעולות"></th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="row"><button class="button btn" id="addRevenueCustomer">הוסף מדרגה</button></div>
+        </section>
+
+        <section class="page" id="page-venues">
+          <h2>מיקומים</h2>
+          <table class="table" id="tblVenues">
+            <thead><tr><th>מפתח</th><th>תווית</th><th>תיאור</th><th>מחיר בסיס (לפני מע"מ)</th><th>עלות (לפני מע"מ)</th><th>מקדם מיקום</th><th aria-label="פעולות"></th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="row"><button class="button btn" id="addVenue">הוסף מיקום</button></div>
+        </section>
+
+        <section class="page" id="page-users">
+          <h2>ניהול משתמשים</h2>
+          <p class="helper-text">ניהול חשבונות משתמשים לגישה למערכת. משתמשי Admin יכולים לגשת לממשק ניהול זה.</p>
+
+          <div class="row" style="margin-bottom: 1.5rem;">
+            <button class="button button--primary btn primary" id="addUserBtn">הוסף משתמש חדש</button>
+          </div>
+
+          <table class="table" id="tblUsers">
+            <thead>
+              <tr>
+                <th>שם מלא</th>
+                <th>אימייל</th>
+                <th>תפקיד</th>
+                <th>סטטוס</th>
+                <th>התחברות אחרונה</th>
+                <th>נוצר בתאריך</th>
+                <th aria-label="פעולות"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem;">טוען משתמשים...</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Add/Edit User Modal -->
+          <div id="userModal" class="modal" style="display: none;">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 id="userModalTitle">הוסף משתמש חדש</h3>
+                <button class="modal-close" id="closeUserModal" aria-label="סגור">&times;</button>
+              </div>
+              <div class="modal-body">
+                <form id="userForm">
+                  <input type="hidden" id="userId" />
+
+                  <div class="form-group">
+                    <label for="userFullName">שם מלא *</label>
+                    <input type="text" id="userFullName" required />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="userEmail">אימייל *</label>
+                    <input type="email" id="userEmail" required />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="userRole">תפקיד *</label>
+                    <select id="userRole" required>
+                      <option value="user">משתמש רגיל (גישה למחשבון בלבד)</option>
+                      <option value="admin">מנהל (גישה מלאה לניהול)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group" id="passwordGroup">
+                    <label for="userPassword">סיסמה ראשונית</label>
+                    <input type="text" id="userPassword" />
+                    <small class="field-help">אם ריק, תיווצר סיסמה אקראית. המשתמש יידרש לשנות אותה בהתחברות הראשונה.</small>
+                  </div>
+
+                  <div class="form-group">
+                    <label>
+                      <input type="checkbox" id="sendEmail" checked />
+                      שלח אימייל עם פרטי התחברות למשתמש
+                    </label>
+                  </div>
+
+                  <div class="modal-actions">
+                    <button type="submit" class="button button--primary btn primary" id="saveUserBtn">שמור משתמש</button>
+                    <button type="button" class="button btn" id="cancelUserBtn">ביטול</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-branding">
+          <h2>מיתוג PDF</h2>
+          <div class="row">
+            <div class="flex-1"><label for="branding_logo_url">קובץ לוגו (URL)</label><input id="branding_logo_url" type="text" placeholder="https://.../logo.png"></div>
+            <div class="flex-1"><label for="branding_logo_dataurl">קובץ לוגו (DataURL)</label><textarea id="branding_logo_dataurl" placeholder="data:image/png;base64,..."></textarea></div>
+          </div>
+          <div class="row">
+            <div class="flex-1"><label for="branding_logo_width">רוחב לוגו ב-PDF (pt)</label><input id="branding_logo_width" type="number" step="1" min="10"></div>
+            <div class="flex-1"><label for="branding_logo_height">גובה לוגו ב-PDF (pt)</label><input id="branding_logo_height" type="number" step="1" min="10"></div>
+          </div>
+          <div class="row">
+            <div class="flex-1"><label for="branding_font_url">גופן מותאם (URL)</label><input id="branding_font_url" type="text" placeholder="https://.../Heebo.ttf"></div>
+            <div class="flex-1"><label for="branding_font_dataurl">גופן מותאם (DataURL)</label><textarea id="branding_font_dataurl" placeholder="data:font/ttf;base64,..."></textarea></div>
+          </div>
+          <h3>שורות כותרת תחתונה</h3>
+          <textarea id="branding_footer_lines" placeholder="שורה לכל שורה"></textarea>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="src/font-controls.js" defer></script>
+  <script src="config.js" defer></script>
+  <script src="src/config-override.js" defer></script>
+  <script src="src/quotas.js" defer></script>
+  <script type="module" src="src/admin/index.js"></script>
+</body>
+</html>

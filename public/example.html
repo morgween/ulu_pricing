@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>יקב אולו · הצעת מחיר</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:#1f1a14;
+      --muted:#6d6357;
+      --accent:#b48a3e;
+      --soft:#f9f4ec;
+      --border:#e4d8c8;
+      --surface:#ffffff;
+    }
+    * { box-sizing:border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: 'Heebo', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans Hebrew", sans-serif;
+      background: var(--soft);
+      color: var(--ink);
+      line-height: 1.45;
+      padding: 8px; /* reduced top/side padding to make overall page tighter */
+    }
+    .sheet {
+      width: 210mm;
+      min-height: 285mm; /* increased to push footer lower */
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid rgba(0,0,0,0.04);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+      border-radius: 12px; /* smaller radius for a denser look */
+      padding: 12mm 12mm 10mm; /* reduced internal padding */
+      display: flex;
+      flex-direction: column;
+      gap: 6mm; /* reduced gap between main blocks */
+    }
+    header.sheet__header {
+      display: flex;
+      align-items: center; /* align center to reduce top whitespace in header */
+      gap: 4mm; /* reduced gap between logo and text */
+    }
+    header .logo {
+      width: 38mm; /* smaller logo */
+      height: 38mm;
+      object-fit: contain;
+    }
+    .document-type {
+      font-size: 12pt; /* slightly smaller */
+      font-weight: 700;
+      color: var(--accent);
+      margin: 0;
+    }
+    .header-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2mm;
+    }
+    .title {
+      font-size: 22pt; /* reduced */
+      font-weight: 800;
+      margin: 0;
+    }
+    .subtitle {
+      font-size: 11pt; /* reduced */
+      color: var(--muted);
+      margin: 0;
+    }
+    .sheet__highlight {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 6mm;
+      display: flex;
+      flex-direction: column;
+      gap: 4mm;
+    }
+    .price-section {
+      text-align: center;
+      padding-bottom: 3mm;
+      border-bottom: 1px solid var(--border);
+    }
+    .value {
+      font-size: 26pt;
+      font-weight: 800;
+      margin: 0;
+      color: var(--accent);
+    }
+    .price-per-person {
+      font-size: 13pt;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 2mm;
+    }
+    .event-meta-compact {
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3mm 4mm;
+      font-size: 11.5pt;
+    }
+    .event-meta-compact > .meta {
+      display: flex;
+      gap: 2mm;
+      align-items: baseline;
+    }
+    .event-meta-compact > .meta.is-hidden {
+      display: none;
+    }
+    .event-meta-compact dt {
+      color: var(--muted);
+      font-weight: 600;
+      flex: 0 0 auto;
+      min-width: 32mm;
+    }
+    .event-meta-compact dd {
+      margin: 0;
+      font-weight: 600;
+      flex: 1 1 auto;
+      text-align: right;
+      color: var(--ink);
+    }
+    .sheet__card--compact {
+      padding: 5mm;
+    }
+    .menu-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5mm;
+      margin: 0;
+    }
+    .menu-row {
+      display: grid;
+      grid-template-columns: 22mm 1fr;
+      gap: 4mm;
+      align-items: baseline;
+      padding: 2mm 0;
+      border-bottom: 1px solid #f5f1e9;
+    }
+    .menu-row:last-child {
+      border-bottom: none;
+    }
+    .menu-row.is-hidden {
+      display: none;
+    }
+    .menu-label {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 11pt;
+      text-align: right;
+    }
+    .menu-value {
+      color: var(--ink);
+      font-weight: 500;
+      font-size: 11pt;
+      text-align: right;
+      line-height: 1.4;
+    }
+    .sheet__card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 6mm; /* reduced padding */
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      gap: 3mm;
+    }
+    .sheet__card h2 {
+      margin: 0;
+      font-size: 13pt; /* slightly smaller */
+      color: var(--accent);
+    }
+    .sheet__card dl {
+      margin: 0;
+      font-size: 11pt; /* slightly smaller */
+      display: grid;
+      grid-template-columns: 28mm 1fr; /* narrower first column */
+      gap: 3mm 6mm;
+    }
+    .sheet__card dl dt {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .sheet__card dl dd {
+      margin: 0;
+      font-weight: 600;
+    }
+    ul.addons {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2.5mm; /* smaller gap between chips */
+      font-size: 11pt;
+    }
+    ul.addons li {
+      background: #fcf8f1;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2.5mm 3mm; /* smaller padding */
+      flex: 1 1 calc(50% - 3mm);
+      min-width: 36mm;
+      line-height: 1.3;
+    }
+    [data-section="addons"].hidden {
+      display: none !important;
+    }
+    .discount-note {
+      margin: 0;
+      background: #fff4de;
+      border: 1px solid #f0d2a3;
+      border-radius: 10px;
+      padding: 2.5mm 3mm;
+      font-size: 10.5pt;
+      color: #8a5b16;
+      display: none;
+    }
+    .discount-note:not(.hidden) {
+      display: block;
+    }
+    footer {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6mm;
+      padding-top: 4mm; /* reduced top padding */
+      border-top: 1px dashed var(--border);
+      font-size: 10.5pt; /* slightly smaller */
+      color: var(--muted);
+    }
+    .qr {
+      width: 22mm; /* smaller QR block */
+      height: 22mm;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .qr img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .sheet { border: none; box-shadow: none; margin: 0; width: auto; min-height: auto; padding: 12mm; border-radius: 0; }
+      footer { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <header class="sheet__header">
+      <img class="logo" src="assets/images/logo.png" alt="יקב אולו – לוגו">
+      <div class="header-text">
+        <p class="document-type">הצעת מחיר ללקוח</p>
+        <h1 class="title">יקב אולו</h1>
+        <p class="subtitle">הצעת מחיר לאירוע</p>
+      </div>
+    </header>
+
+    <section class="sheet__highlight">
+      <div class="price-section">
+        <div class="value">₪0</div>
+        <div class="price-per-person">₪0 לאדם כולל מע"מ</div>
+      </div>
+      <dl class="event-meta-compact">
+        <div class="meta meta-client"><dt>לקוח/ה:</dt><dd class="client-name">—</dd></div>
+        <div class="meta meta-date"><dt>תאריך:</dt><dd class="event-date">—</dd></div>
+        <div class="meta meta-guests"><dt>מספר אורחים:</dt><dd class="guest-count">0</dd></div>
+        <div class="meta meta-type"><dt>סוג האירוע:</dt><dd class="event-type">—</dd></div>
+      </dl>
+    </section>
+
+    <section class="sheet__card sheet__card--compact" data-section="menu-details">
+      <h2>פרטי התפריט</h2>
+      <div class="menu-grid">
+        <div class="menu-row meta-menu">
+          <span class="menu-label">תפריט</span>
+          <span class="menu-value menu-summary">—</span>
+        </div>
+        <div class="menu-row meta-wine">
+          <span class="menu-label">יין</span>
+          <span class="menu-value wine-summary">—</span>
+        </div>
+        <div class="menu-row meta-drinks">
+          <span class="menu-label">משקאות</span>
+          <span class="menu-value drinks-summary">—</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="sheet__card" data-section="addons">
+      <h2>תוספות</h2>
+      <ul class="addons"></ul>
+    </section>
+
+    <p class="discount-note hidden"></p>
+
+    <footer>
+      <div>
+        טלפון: 054-7193773 · דוא"ל: hello@ulu-winery.co.il<br>
+        אתר: www.uluwinery.co.il · כתובת: גבעת ישעיהו, ישראל
+      </div>
+      <div class="qr"></div>
+    </footer>
+  </main>
+</body>
+</html>

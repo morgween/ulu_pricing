@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>גישה נדחתה - יקב אולו</title>
+  <link rel="stylesheet" href="styles/admin.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f6f4f0 0%, #e8d6b5 100%);
+    }
+    .error-container {
+      max-width: 600px;
+      width: 100%;
+      padding: 2rem;
+      text-align: center;
+    }
+    .error-card {
+      background: white;
+      padding: 3rem 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(31, 27, 22, 0.15);
+    }
+    .error-icon {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+    }
+    .error-code {
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 0;
+    }
+    .error-title {
+      font-size: 1.75rem;
+      color: var(--ink);
+      margin: 1rem 0 0.5rem;
+    }
+    .error-message {
+      font-size: 1.1rem;
+      color: var(--ink-muted);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--accent-strong);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(184, 141, 59, 0.3);
+    }
+    .btn-secondary {
+      background: var(--surface-soft);
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="error-card">
+      <div class="error-icon">🚫</div>
+      <h1 class="error-code">403</h1>
+      <h2 class="error-title">גישה נדחתה</h2>
+      <p class="error-message">
+        אין לך הרשאות לגשת לדף זה.<br>
+        אם אתה סבור שזו טעות, צור קשר עם מנהל המערכת.
+      </p>
+      <div class="btn-group">
+        <a href="/index.html" class="btn btn-primary">חזרה למחשבון</a>
+        <button onclick="history.back()" class="btn btn-secondary">חזור לדף הקודם</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

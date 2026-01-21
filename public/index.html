@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data: blob:; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'" />
+  <title>מחשבון תמחור אירועים - יקב</title>
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body data-font-key="winery_font_px" data-font-default="16" data-font-min="12" data-font-max="22">
+  <div id="root">
+    <div class="loading-state" aria-live="polite">
+      <p>טוען את מחשבון האירועים…</p>
+    </div>
+  </div>
+  <noscript>
+    <p>נדרש לאפשר JavaScript כדי להשתמש במחשבון.</p>
+  </noscript>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.12/htmx.min.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-populate@1.21.0/browser/xlsx-populate.min.js" defer></script>
+  <script src="src/font-controls.js" defer></script>
+  <script src="config.js" defer></script>
+  <script src="src/quotas.js" defer></script>
+  <script src="src/config-override.js" defer></script>
+  <script src="src/pricing-engine.js" defer></script>
+  <script src="src/admin-navigation.js" defer></script>
+  <script type="module" src="src/react/main.js"></script>
+</body>
+</html>

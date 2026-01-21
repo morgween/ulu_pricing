@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>התחברות - יקב אולו</title>
+  <link rel="stylesheet" href="styles/admin.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f6f4f0 0%, #e8d6b5 100%);
+    }
+    .login-container {
+      max-width: 420px;
+      width: 100%;
+      padding: 2rem;
+    }
+    .login-card {
+      background: white;
+      padding: 3rem 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(31, 27, 22, 0.15);
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .logo h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      color: var(--accent);
+    }
+    .logo p {
+      margin: 0.5rem 0 0;
+      color: var(--ink-muted);
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+    .btn-login {
+      width: 100%;
+      padding: 1rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-login:hover {
+      background: var(--accent-strong);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(184, 141, 59, 0.3);
+    }
+    .btn-login:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .error-message {
+      background: #fee;
+      border: 1px solid #fcc;
+      color: #c00;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+    .error-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo">
+        <h1>🍷</h1>
+        <h1>יקב אולו</h1>
+        <p>מחשבון תמחור אירועים</p>
+      </div>
+
+      <div id="error" class="error-message"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">אימייל</label>
+          <input type="email" id="email" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="password">סיסמה</label>
+          <input type="password" id="password" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn">התחבר</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorDiv = document.getElementById('error');
+    const loginBtn = document.getElementById('loginBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      errorDiv.classList.remove('show');
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'מתחבר...';
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          if (data.mustChangePassword) {
+            window.location.href = '/change-password.html';
+          } else if (data.user.role === 'admin') {
+            window.location.href = '/admin.html';
+          } else {
+            window.location.href = '/index.html';
+          }
+        } else {
+          errorDiv.textContent = data.message || 'שגיאה בהתחברות';
+          errorDiv.classList.add('show');
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'התחבר';
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        errorDiv.textContent = 'שגיאת תקשורת עם השרת';
+        errorDiv.classList.add('show');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'התחבר';
+      }
+    });
+  </script>
+</body>
+</html>
