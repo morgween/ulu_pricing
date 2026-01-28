@@ -38,7 +38,13 @@ router.get('/', async (req, res) => {
  */
 router.post('/', async (req, res) => {
   try {
-    const { fullName, email, role } = req.body;
+    const {
+      fullName,
+      email,
+      role,
+      password,
+      sendEmail
+    } = req.body;
 
     if (!fullName || !email) {
       return res.status(400).json({
@@ -57,16 +63,16 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Generate random initial password
-    const initialPassword = generateRandomPassword();
+    const passwordSetManually = Boolean(password);
+    const initialPassword = passwordSetManually ? password : generateRandomPassword();
+    const mustChangePassword = !passwordSetManually;
 
     // Validate password
     const validation = validatePasswordStrength(initialPassword);
     if (!validation.isValid) {
-      // This shouldn't happen with our generator, but check anyway
-      return res.status(500).json({
-        error: 'Password generation failed',
-        message: 'שגיאה ביצירת סיסמה'
+      return res.status(400).json({
+        error: 'Password validation failed',
+        message: validation.errors?.join(', ') || 'סיסמה לא עומדת בדרישות האבטחה'
       });
     }
 
@@ -76,31 +82,47 @@ router.post('/', async (req, res) => {
       email,
       password: initialPassword,
       role: role || 'user',
-      mustChangePassword: true,
+      mustChangePassword,
       isActive: true,
       createdBy: req.session.userId
     });
 
     // Send credentials via email
     let emailSent = false;
+    const shouldSendEmail = sendEmail !== false && !passwordSetManually;
+    let emailSkippedReason = null;
     try {
-      await sendCredentialsEmail(email, fullName, initialPassword);
-      emailSent = true;
+      if (shouldSendEmail) {
+        await sendCredentialsEmail(email, fullName, initialPassword);
+        emailSent = true;
+      } else {
+        emailSkippedReason = passwordSetManually ? 'manual-password' : 'sendEmail-false';
+      }
     } catch (emailError) {
       console.error('Failed to send credentials email:', emailError);
       // Continue anyway - password will be shown only if email fails
     }
 
     // SECURITY FIX: Only return password if email delivery failed and in development mode
+    let responseMessage = 'משתמש נוצר בהצלחה';
+    if (emailSent) {
+      responseMessage = 'משתמש נוצר בהצלחה. פרטי ההתחברות נשלחו למייל';
+    } else if (emailSkippedReason === 'manual-password') {
+      responseMessage = 'משתמש נוצר בהצלחה. הסיסמה הוגדרה ידנית ולא נשלחה באימייל';
+    } else if (emailSkippedReason === 'sendEmail-false') {
+      responseMessage = 'משתמש נוצר בהצלחה. שליחת אימייל הושבתה עבור משתמש זה';
+    } else {
+      responseMessage = 'משתמש נוצר בהצלחה. שגיאה בשליחת אימייל';
+    }
     const response = {
       success: true,
-      message: emailSent ? 'משתמש נוצר בהצלחה. פרטי ההתחברות נשלחו למייל' : 'משתמש נוצר בהצלחה. שגיאה בשליחת אימייל',
+      message: responseMessage,
       user: user.toSafeObject(),
       emailSent
     };
 
     // Only include password if email failed to send (admin needs to manually provide it)
-    if (!emailSent) {
+    if (!emailSent && !passwordSetManually) {
       response.temporaryPassword = initialPassword;
       response.warning = 'IMPORTANT: Save this password securely. It will not be shown again.';
     }
