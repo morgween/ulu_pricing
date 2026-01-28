@@ -151,8 +151,7 @@ export class UsersSection {
 
       // Actions
       const tdActions = this.document.createElement('td');
-      tdActions.style.display = 'flex';
-      tdActions.style.gap = '0.5rem';
+      tdActions.className = 'table-actions';
 
       const editBtn = this.document.createElement('button');
       editBtn.className = 'button btn';
