@@ -279,10 +279,10 @@ function migrateConfig(config) {
 // SECURITY FIX: Rate limiting for authentication endpoints to prevent brute force attacks
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 login attempts per windowMs
+  max: 15, // Limit each IP to 15 login attempts per windowMs
   message: {
     error: 'Too many login attempts',
-    message: 'יותר מדי ניסיונות התחברות. אנא נסה שוב מאוחר יותר'
+    message: 'יותר מדי ניסיונות התחברות. אנא נסה שוב בעוד 15 דקות'
   },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false // Disable the `X-RateLimit-*` headers
