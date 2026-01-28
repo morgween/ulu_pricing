@@ -236,8 +236,8 @@ export class UsersSection {
       this.closeModal();
       await this.loadUsers();
 
-      if (!isEdit && data.generatedPassword) {
-        this.alert(`משתמש נוצר בהצלחה!\n\nסיסמה שנוצרה: ${data.generatedPassword}\n\n${data.emailSent ? 'אימייל עם פרטי התחברות נשלח למשתמש.' : 'לא ניתן לשלוח אימייל. אנא העתק את הסיסמה ושלח למשתמש באופן ידני.'}`);
+      if (!isEdit && data.temporaryPassword) {
+        this.alert(`משתמש נוצר בהצלחה!\n\nסיסמה שנוצרה: ${data.temporaryPassword}\n\n${data.emailSent ? 'אימייל עם פרטי התחברות נשלח למשתמש.' : 'לא ניתן לשלוח אימייל. אנא העתק את הסיסמה ושלח למשתמש באופן ידני.'}`);
       } else {
         this.alert(isEdit ? 'משתמש עודכן בהצלחה' : 'משתמש נוצר בהצלחה');
       }
