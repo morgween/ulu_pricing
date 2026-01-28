@@ -160,6 +160,15 @@ export class UsersSection {
       editBtn.onclick = () => this.openEditUserModal(user);
       tdActions.appendChild(editBtn);
 
+      // Reset Password button
+      const resetPasswordBtn = this.document.createElement('button');
+      resetPasswordBtn.className = 'button btn';
+      resetPasswordBtn.textContent = 'אפס סיסמה';
+      resetPasswordBtn.style.background = '#ff9800';
+      resetPasswordBtn.style.color = 'white';
+      resetPasswordBtn.onclick = () => this.resetPassword(user.id);
+      tdActions.appendChild(resetPasswordBtn);
+
       if (user.isActive) {
         const deactivateBtn = this.document.createElement('button');
         deactivateBtn.className = 'button btn';
@@ -177,6 +186,15 @@ export class UsersSection {
         activateBtn.onclick = () => this.toggleUserStatus(user.id, true);
         tdActions.appendChild(activateBtn);
       }
+
+      // Delete button
+      const deleteBtn = this.document.createElement('button');
+      deleteBtn.className = 'button btn';
+      deleteBtn.textContent = 'מחק';
+      deleteBtn.style.background = '#d32f2f';
+      deleteBtn.style.color = 'white';
+      deleteBtn.onclick = () => this.deleteUser(user.id);
+      tdActions.appendChild(deleteBtn);
 
       tr.appendChild(tdActions);
       tbody.appendChild(tr);
@@ -201,7 +219,7 @@ export class UsersSection {
 
     try {
       const url = isEdit ? `/api/users/${userId}` : '/api/users';
-      const method = isEdit ? 'PUT' : 'POST';
+      const method = isEdit ? 'PATCH' : 'POST';
 
       const response = await fetch(url, {
         method,
@@ -252,6 +270,67 @@ export class UsersSection {
     } catch (error) {
       console.error('Error toggling user status:', error);
       this.showError('שגיאה בעדכון סטטוס המשתמש');
+    }
+  }
+
+  async resetPassword(userId) {
+    if (!confirm('האם אתה בטוח שברצונך לאפס את סיסמת המשתמש? סיסמה חדשה תישלח למייל המשתמש.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/users/${userId}/reset-password`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to reset password');
+      }
+
+      const data = await response.json();
+
+      // Show password if email failed
+      if (!data.emailSent && data.temporaryPassword) {
+        this.alert(`הסיסמה אופסה בהצלחה!\n\nסיסמה זמנית: ${data.temporaryPassword}\n\nאזהרה: שמור את הסיסמה הזו באופן מאובטח. היא לא תוצג שוב.\n\nשליחת המייל נכשלה - אנא העבר את הסיסמה למשתמש באופן ידני.`);
+      } else {
+        this.alert('הסיסמה אופסה בהצלחה. המשתמש יקבל סיסמה חדשה במייל.');
+      }
+
+      await this.loadUsers();
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      this.showError(error.message || 'שגיאה באיפוס סיסמה');
+    }
+  }
+
+  async deleteUser(userId) {
+    if (!confirm('האם אתה בטוח שברצונך למחוק את המשתמש?\n\nפעולה זו לא ניתנת לביטול!')) {
+      return;
+    }
+
+    // Double confirmation for extra safety
+    if (!confirm('אישור סופי: האם אתה בטוח לחלוטין שברצונך למחוק את המשתמש? כל הנתונים שלו יימחקו לצמיתות.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/users/${userId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to delete user');
+      }
+
+      await this.loadUsers();
+      this.alert('המשתמש נמחק בהצלחה');
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      this.showError(error.message || 'שגיאה במחיקת המשתמש');
     }
   }
 

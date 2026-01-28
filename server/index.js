@@ -20,7 +20,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+const HOST = '127.0.0.1';
 // SECURITY FIX: Require SESSION_SECRET to be set in environment
 const SESSION_SECRET = process.env.SESSION_SECRET;
 if (!SESSION_SECRET) {
@@ -30,6 +30,9 @@ if (!SESSION_SECRET) {
 }
 
 // ============= MIDDLEWARE =============
+
+// Trust proxy - required when behind reverse proxy (Caddy)
+app.set('trust proxy', true);
 
 // SECURITY FIX: Configure CORS with whitelisted origins instead of accepting all
 const allowedOrigins = process.env.CORS_ORIGINS?.split(',').map(o => o.trim()) || [];
@@ -420,6 +423,16 @@ app.use((req, res, next) => {
 // Error Handler - Must be last
 app.use((err, req, res, next) => {
   console.error('Error:', err);
+
+  // For API routes, return JSON error
+  if (req.path.startsWith('/api/')) {
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: 'שגיאת שרת פנימית'
+    });
+  }
+
+  // For page routes, return HTML error page
   res.status(500).sendFile(path.join(__dirname, '../public/500.html'));
 });
 
@@ -433,7 +446,8 @@ console.log('✓ Session store synced');
 await initializeDataFiles();
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '127.0.0.1', () => {
+  console.log(`Server running at http://${HOST}:${PORT}`);
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  🍷 Ulu Winery Calculator Server                          ║

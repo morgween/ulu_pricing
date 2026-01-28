@@ -52,7 +52,7 @@ window.WINERY_CONFIG = {
   },
   "food": {
     "winery": {
-      "price_incVAT": 191,
+      "price_incVAT": 181,
       "cost_exVAT": 46
     },
     "extras": {
@@ -99,7 +99,7 @@ window.WINERY_CONFIG = {
     },
     "cold": {
       "costPerUnit": 5,
-      "pricePerUnit": 16
+      "pricePerUnit": 17
     },
     "childHotMultiplier": 0.75,
     "childColdMultiplier": 1,
