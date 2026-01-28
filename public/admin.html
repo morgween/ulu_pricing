@@ -78,19 +78,21 @@
           <header class="page__header">
             <h2>תוספות ברירת־מחדל (config/quotas.js)</h2>
           </header>
-          <table class="table" id="tblExtras">
-            <thead>
-              <tr>
-                <th>שם</th>
-                <th>תיאור</th>
-                <th>סוג</th>
-                <th>כמות</th>
-                <th>מחיר יח׳ (לפני מע"מ)</th>
-                <th aria-label="פעולות"></th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <div class="table-wrapper">
+            <table class="table" id="tblExtras">
+              <thead>
+                <tr>
+                  <th>שם</th>
+                  <th>תיאור</th>
+                  <th>סוג</th>
+                  <th>כמות</th>
+                  <th>מחיר יח׳ (לפני מע"מ)</th>
+                  <th aria-label="פעולות"></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
           <div class="row">
             <button class="button btn" id="addExtra">הוסף תוספת</button>
           </div>
@@ -201,21 +203,23 @@
             </div>
           </div>
           <h3>תוספות כיבוד</h3>
-          <table class="table" id="tblFoodExtras">
-            <thead>
-              <tr>
-                <th>מפתח</th>
-                <th>תווית</th>
-                <th>מזהה DOM</th>
-                <th>מחיר (כולל מע"מ)</th>
-                <th>עלות (לפני מע"מ)</th>
-                <th>חל על</th>
-                <th>חישוב לפי</th>
-                <th aria-label="פעולות"></th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <div class="table-wrapper">
+            <table class="table" id="tblFoodExtras">
+              <thead>
+                <tr>
+                  <th>מפתח</th>
+                  <th>תווית</th>
+                  <th>מזהה DOM</th>
+                  <th>מחיר (כולל מע"מ)</th>
+                  <th>עלות (לפני מע"מ)</th>
+                  <th>חל על</th>
+                  <th>חישוב לפי</th>
+                  <th aria-label="פעולות"></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
           <div class="row"><button class="button btn" id="addFoodExtra">הוסף תוספת</button></div>
         </section>
 
@@ -236,10 +240,12 @@
             </div>
           </div>
           <h3>טבלת עובדים לפי סוג תפריט</h3>
-          <table class="table" id="tblWorkerMatrix">
-            <thead><tr><th>מינימום אורחים</th><th>מקסימום אורחים</th><th>כיבוד היקב</th><th>קייטרינג</th><th aria-label="פעולות"></th></tr></thead>
-            <tbody></tbody>
-          </table>
+          <div class="table-wrapper">
+            <table class="table" id="tblWorkerMatrix">
+              <thead><tr><th>מינימום אורחים</th><th>מקסימום אורחים</th><th>כיבוד היקב</th><th>קייטרינג</th><th aria-label="פעולות"></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
           <div class="row"><button class="button btn" id="addWorkerMatrix">הוסף שורה</button></div>
         </section>
 
@@ -278,10 +284,12 @@
             הגדר כמה משקאות חמים וקרים כל אורח מקבל לפי משך האירוע.<br>
             <strong>המלצה:</strong> קצר (1:1) • בינוני (1.5:1.5) • ארוך (2:2)
           </p>
-          <table class="table" id="tblDrinkDurations">
-            <thead><tr><th>מפתח משך (short/medium/long)</th><th>משקאות חמים לאדם</th><th>משקאות קרים לאדם</th><th aria-label="פעולות"></th></tr></thead>
-            <tbody></tbody>
-          </table>
+          <div class="table-wrapper">
+            <table class="table" id="tblDrinkDurations">
+              <thead><tr><th>מפתח משך (short/medium/long)</th><th>משקאות חמים לאדם</th><th>משקאות קרים לאדם</th><th aria-label="פעולות"></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
           <div class="row"><button class="button btn" id="addDrinkDuration">+ הוסף משך אירוע</button></div>
         </section>
 
@@ -434,31 +442,39 @@
         <section class="page" id="page-revenue">
           <h2>יעדי רווח</h2>
           <h3>כיבוד היקב</h3>
-          <table class="table" id="tblRevenueOurFood">
-            <thead><tr><th>מספר אורחים</th><th>יעד רווח%</th><th aria-label="פעולות"></th></tr></thead>
-            <tbody></tbody>
-          </table>
+          <div class="table-wrapper">
+            <table class="table" id="tblRevenueOurFood">
+              <thead><tr><th>מספר אורחים</th><th>יעד רווח%</th><th aria-label="פעולות"></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
           <div class="row"><button class="button btn" id="addRevenueOurFood">הוסף מדרגה</button></div>
           <h3>קייטרינג שלנו</h3>
-          <table class="table" id="tblRevenueCatering">
-            <thead><tr><th>מספר אורחים</th><th>יעד רווח%</th><th aria-label="פעולות"></th></tr></thead>
-            <tbody></tbody>
-          </table>
+          <div class="table-wrapper">
+            <table class="table" id="tblRevenueCatering">
+              <thead><tr><th>מספר אורחים</th><th>יעד רווח%</th><th aria-label="פעולות"></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
           <div class="row"><button class="button btn" id="addRevenueCatering">הוסף מדרגה</button></div>
           <h3>לקוח מביא</h3>
-          <table class="table" id="tblRevenueCustomer">
-            <thead><tr><th>מספר אורחים</th><th>יעד רווח%</th><th aria-label="פעולות"></th></tr></thead>
-            <tbody></tbody>
-          </table>
+          <div class="table-wrapper">
+            <table class="table" id="tblRevenueCustomer">
+              <thead><tr><th>מספר אורחים</th><th>יעד רווח%</th><th aria-label="פעולות"></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
           <div class="row"><button class="button btn" id="addRevenueCustomer">הוסף מדרגה</button></div>
         </section>
 
         <section class="page" id="page-venues">
           <h2>מיקומים</h2>
-          <table class="table" id="tblVenues">
-            <thead><tr><th>מפתח</th><th>תווית</th><th>תיאור</th><th>מחיר בסיס (לפני מע"מ)</th><th>עלות (לפני מע"מ)</th><th>מקדם מיקום</th><th aria-label="פעולות"></th></tr></thead>
-            <tbody></tbody>
-          </table>
+          <div class="table-wrapper">
+            <table class="table" id="tblVenues">
+              <thead><tr><th>מפתח</th><th>תווית</th><th>תיאור</th><th>מחיר בסיס (לפני מע"מ)</th><th>עלות (לפני מע"מ)</th><th>מקדם מיקום</th><th aria-label="פעולות"></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
           <div class="row"><button class="button btn" id="addVenue">הוסף מיקום</button></div>
         </section>
 
@@ -470,24 +486,26 @@
             <button class="button button--primary btn primary" id="addUserBtn">הוסף משתמש חדש</button>
           </div>
 
-          <table class="table" id="tblUsers">
-            <thead>
-              <tr>
-                <th>שם מלא</th>
-                <th>אימייל</th>
-                <th>תפקיד</th>
-                <th>סטטוס</th>
-                <th>התחברות אחרונה</th>
-                <th>נוצר בתאריך</th>
-                <th aria-label="פעולות"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colspan="7" style="text-align: center; padding: 2rem;">טוען משתמשים...</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-wrapper">
+            <table class="table" id="tblUsers">
+              <thead>
+                <tr>
+                  <th>שם מלא</th>
+                  <th>אימייל</th>
+                  <th>תפקיד</th>
+                  <th>סטטוס</th>
+                  <th>התחברות אחרונה</th>
+                  <th>נוצר בתאריך</th>
+                  <th aria-label="פעולות"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="7" style="text-align: center; padding: 2rem;">טוען משתמשים...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <!-- Add/Edit User Modal -->
           <div id="userModal" class="modal" style="display: none;">
